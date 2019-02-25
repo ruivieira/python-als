@@ -5,14 +5,15 @@ from scipy import sparse
 from typing import Tuple
 
 
-def load_data(path):
+def load_data(path, headers=True):
     max_item = 0
     max_user = 0
     data = []
     pairs = []
-    with open(path, 'rt') as csvfile:
-        reader = csv.reader(csvfile, delimiter=',', quotechar='"')
-        next(reader, None)
+    with open(path, 'rt') as file:
+        reader = csv.reader(file, delimiter=',', quotechar='"')
+        if headers:
+            next(reader, None)
         for row in reader:
             item_id = int(row[0])
             user_id = int(row[1])
@@ -25,6 +26,7 @@ def load_data(path):
     ratings = sparse.lil_matrix((max_item, max_user))
     for d in data:
         ratings[d[0] - 1, d[1] - 1] = d[2]
+    return ratings
 
 
 class ALS(ABC):
